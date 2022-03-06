@@ -11,43 +11,54 @@ using UnityEngine;
  */
 public class AbstractPolygonController : MonoBehaviour
 {
+    public static AbstractPolygonController Instance { get; private set; }
+
     private List<GameObject> _vertices;
     private List<LineRenderer> _edges;
+
+    private void Awake()
+    {
+        // If there is an instance, and it's not me, delete myself.
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        _vertices = new List<GameObject>();
-        _edges = new List<LineRenderer>();
+        Reset();
     }
 
     // Update is called once per frame
     void Update()
     {
         // Draw edges
-        for (var i = 0; i < _vertices.Count(); i += 2)
+        for (var i = 0; i < _vertices.Count(); i++)
         {
-            // Part of complete vertex pair
-            if (_vertices.Count() > i)
+            // Check if line exists else create it
+            if (i >= _edges.Count())
             {
-                // Check if line exists else create it
-                var lineIndex = i % 2;
-                if (lineIndex > _edges.Count())
-                {
-                    var lr = new LineRenderer();
-                    lr.positionCount = 2;
-                    _edges.Add(lr);
-                }
-
-                if (lineIndex > _edges.Count()) throw new Exception("Tew few edges drawing polygons.");
-                // Set edges
-                _edges[lineIndex].SetPosition(0, _vertices[i].transform.position);
-                _edges[lineIndex].SetPosition(1, _vertices[i + 1].transform.position);
+                GameObject gObject = new GameObject("PolygonLineContainer");
+                var lr = gObject.AddComponent<LineRenderer>();
+                lr.positionCount = 2;
+                _edges.Add(lr);
             }
+
+            if (i >= _edges.Count()) throw new Exception("Too few edges drawing polygon.");
+            // Set edges
+            _edges[i].SetPosition(0, _vertices[i].transform.position);
+            // Only set endpoint if there's another vertex
+            if (i + 1 < _vertices.Count()) _edges[i].SetPosition(1, _vertices[i + 1].transform.position);
         }
 
         // If touch search, or destroy
-        if (Input.GetMouseButton(0))
+        if (_vertices.Any() && Input.GetMouseButton(0))
         {
             // Draw searching line
             _edges[_edges.Count() - 1].SetPosition(0, _vertices[_vertices.Count() - 1].transform.position);
@@ -56,11 +67,12 @@ public class AbstractPolygonController : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            // Clear data in singleton
+            Reset();
         }
     }
 
-    void AddVertex(GameObject vertex)
+    public void AddVertex(GameObject vertex)
     {
         if (!_vertices.Contains(vertex))
         {
@@ -68,9 +80,21 @@ public class AbstractPolygonController : MonoBehaviour
         }
     }
 
+    public bool IsVertex(GameObject vertex)
+    {
+        return _vertices.Contains(vertex);
+    }
+
     bool IsNonIntersecting()
     {
         // TODO detect intersection
         return true;
+    }
+
+    private void Reset()
+    {
+        _edges?.ForEach(lr => Destroy(lr.gameObject));
+        _vertices = new List<GameObject>();
+        _edges = new List<LineRenderer>();
     }
 }

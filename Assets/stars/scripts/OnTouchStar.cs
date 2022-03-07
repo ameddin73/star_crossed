@@ -24,15 +24,17 @@ public class OnTouchStar : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (Input.GetMouseButton(0) && !AbstractPolygonController.Instance.IsVertex(gameObject))
+        if (Input.GetMouseButton(0) && !GraphController.Instance.IsVertex(gameObject))
         {
             _particle.Play();
-            AbstractPolygonController.Instance.AddVertex(gameObject);
+            GraphController.Instance.AddVertex(gameObject);
         }
     }
 
     void Update()
     {
-        if (_particle.isPlaying && !Input.GetMouseButton(0) && !AbstractPolygonController.Instance.IsVertex(gameObject)) _particle.Stop();
+        if (_particle.isPlaying && !Input.GetMouseButton(0)
+                                && !GraphController.Instance.IsVertex(gameObject))
+            _particle.Stop();
     }
 }

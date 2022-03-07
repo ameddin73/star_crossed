@@ -9,12 +9,13 @@ using UnityEngine;
  *
  * A polygon is complete when the vector twos form a non-intersecting polygon.
  */
-public class AbstractPolygonController : MonoBehaviour
+public class GraphController : MonoBehaviour
 {
-    public static AbstractPolygonController Instance { get; private set; }
+    public static GraphController Instance { get; private set; }
 
+    public GameObject edgePrefab;
     private List<GameObject> _vertices;
-    private List<LineRenderer> _edges;
+    private List<EdgeController> _edges;
 
     private void Awake()
     {
@@ -44,9 +45,8 @@ public class AbstractPolygonController : MonoBehaviour
             // Check if line exists else create it
             if (i >= _edges.Count())
             {
-                GameObject gObject = new GameObject("PolygonLineContainer");
-                var lr = gObject.AddComponent<LineRenderer>();
-                lr.positionCount = 2;
+                var gObject = Instantiate(edgePrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                var lr = gObject.AddComponent<EdgeController>();
                 _edges.Add(lr);
             }
 
@@ -95,6 +95,6 @@ public class AbstractPolygonController : MonoBehaviour
     {
         _edges?.ForEach(lr => Destroy(lr.gameObject));
         _vertices = new List<GameObject>();
-        _edges = new List<LineRenderer>();
+        _edges = new List<EdgeController>();
     }
 }

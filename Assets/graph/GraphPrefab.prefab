@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9211179572164584125}
   - component: {fileID: -783236984094457843}
   m_Layer: 0
-  m_Name: AbstractPolygon
+  m_Name: GraphPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,3 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 064bffa89104149f1938f5a116947997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  edgePrefab: {fileID: 1491201620256550641, guid: 55c575b99f56f4ceca947db681f6f7b7, type: 3}

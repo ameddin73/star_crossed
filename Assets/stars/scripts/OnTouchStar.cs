@@ -24,7 +24,7 @@ public class OnTouchStar : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (Input.GetMouseButton(0) && !GraphController.Instance.IsVertex(gameObject))
+        if (Input.GetMouseButton(0) && !GraphController.Instance.IsNonInitialVertex(gameObject))
         {
             _particle.Play();
             GraphController.Instance.AddVertex(gameObject);
@@ -34,7 +34,7 @@ public class OnTouchStar : MonoBehaviour
     void Update()
     {
         if (_particle.isPlaying && !Input.GetMouseButton(0)
-                                && !GraphController.Instance.IsVertex(gameObject))
+                                && !GraphController.Instance.IsNonInitialVertex(gameObject))
             _particle.Stop();
     }
 }

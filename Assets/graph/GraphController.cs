@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using graph.edge;
 using UnityEngine;
 
 /**
@@ -15,7 +16,7 @@ public class GraphController : MonoBehaviour
 
     public GameObject edgePrefab;
     private List<GameObject> _vertices;
-    private List<EdgeController> _edges;
+    private List<IEdge> _edges;
 
     private void Awake()
     {
@@ -46,24 +47,24 @@ public class GraphController : MonoBehaviour
             if (i >= _edges.Count())
             {
                 var gObject = Instantiate(edgePrefab, new Vector3(0, 0, 0), Quaternion.identity);
-                var lr = gObject.AddComponent<EdgeController>();
+                var lr = gObject.AddComponent<EdgeLineRenderer>();
                 _edges.Add(lr);
             }
 
             if (i >= _edges.Count()) throw new Exception("Too few edges drawing polygon.");
             // Set edges
-            _edges[i].SetPosition(0, _vertices[i].transform.position);
+            _edges[i].startPosition = _vertices[i].transform.position;
             // Only set endpoint if there's another vertex
-            if (i + 1 < _vertices.Count()) _edges[i].SetPosition(1, _vertices[i + 1].transform.position);
+            if (i + 1 < _vertices.Count()) _edges[i].endPosition = _vertices[i + 1].transform.position;
         }
 
         // If touch search, or destroy
         if (_vertices.Any() && Input.GetMouseButton(0))
         {
             // Draw searching line
-            _edges[_edges.Count() - 1].SetPosition(0, _vertices[_vertices.Count() - 1].transform.position);
+            _edges[_edges.Count() - 1].startPosition = _vertices[_vertices.Count() - 1].transform.position;
             Vector2 touchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _edges[_edges.Count() - 1].SetPosition(1, touchPosition);
+            _edges[_edges.Count() - 1].endPosition = touchPosition;
         }
         else
         {
@@ -78,11 +79,22 @@ public class GraphController : MonoBehaviour
         {
             _vertices.Add(vertex);
         }
+        else if (IsInitialVertex(vertex))
+        {
+            CompleteGraph();
+        }
     }
 
-    public bool IsVertex(GameObject vertex)
+    public bool IsNonInitialVertex(GameObject vertex)
     {
+        if (IsInitialVertex(vertex)) return false;
         return _vertices.Contains(vertex);
+    }
+
+    private void CompleteGraph()
+    {
+        _vertices.ForEach(Destroy);
+        Reset();
     }
 
     bool IsNonIntersecting()
@@ -93,8 +105,13 @@ public class GraphController : MonoBehaviour
 
     private void Reset()
     {
-        _edges?.ForEach(lr => Destroy(lr.gameObject));
+        _edges?.ForEach(edge => edge.Destroy());
         _vertices = new List<GameObject>();
-        _edges = new List<EdgeController>();
+        _edges = new List<IEdge>();
+    }
+
+    private bool IsInitialVertex(GameObject vertex)
+    {
+        return _vertices.Any() && _vertices[0] == vertex;
     }
 }

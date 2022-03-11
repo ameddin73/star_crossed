@@ -58,7 +58,7 @@ public class GraphController : MonoBehaviour
             if (i + 1 < _vertices.Count()) _edges[i].endPosition = _vertices[i + 1].transform.position;
         }
 
-        // If touch search, or destroy
+        // If touch end final line there, or destroy
         if (_vertices.Any() && Input.GetMouseButton(0))
         {
             // Draw searching line

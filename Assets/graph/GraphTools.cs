@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using graph.edge;
 using UnityEngine;
+using TreeLib;
 
 namespace graph
 {
@@ -16,7 +17,7 @@ namespace graph
         /// </summary>
         /// <param name="edges">List of IEdges representing line segmens</param>
         /// <returns>List of intersections</returns>
-        public static IEdge[][] PolygonIntersections(IEdge[] edges)
+        public static List<IEdge[]> PolygonIntersections(IEdge[] edges)
         {
             // Ordered queue by vector coordinates
             var pointQueue = new SortedSet<Point>(new Point());
@@ -28,10 +29,11 @@ namespace graph
             }
 
             // Ordered queue of edges under test
-            var edgesUnderTest = new SortedSet<SweepLineEdge>(new SweepLineEdge(null));
+            // var edgesUnderTest = new SortedSet<SweepLineEdge>(new SweepLineEdge(null));
+            var edgesUnderTest = new AVLTreeRankList<SweepLineEdge>();
 
             // Results
-            var intersections = new IEdge[][] { };
+            var intersections = new List<IEdge[]>();
 
             /********************************* Sweep-line Algorithm *********************************/
             // 1. pop through points using y-value as sweep-line
@@ -45,21 +47,32 @@ namespace graph
                 var point = pointQueue.First();
                 pointQueue.Remove(point);
 
+                // Get edge + neighbors
+                var edge = (SweepLineEdge)point.edge;
+                if (!edgesUnderTest.ContainsKey(edge)) edgesUnderTest.Add(edge);
+
+                var predecessor = edgesUnderTest.GetFastEnumerable(edge, false).First().Key;
+                var successor = edgesUnderTest.GetFastEnumerable(edge).First().Key;
+
+
                 // 2. add line if point is start
                 if (point.start)
                 {
-                    var edge = (SweepLineEdge) point.edge;
-                    edgesUnderTest.Add(edge);
-
                     // 3. Check if this points intersects with its predecessor and successor
-                    // var select = edgesUnderTest.V
-                    // edgesUnderTest.ElementAt(3);
+                    if (predecessor != null && IntersectionPoint(edge, predecessor) != null)
+                        intersections.Add(new IEdge[] { predecessor, edge });
+                    if (successor != null && IntersectionPoint(edge, successor) != null)
+                        intersections.Add(new IEdge[] { edge, successor });
                 }
-
-                // 3. compare
-
-                // TODO figure the rest of this out
-                // https://youtu.be/I9EsN2DTnN8?t=229
+                else
+                {
+                    // 4. Check if neighbors touch (since we're at end of line)
+                    if (predecessor != null && successor != null && IntersectionPoint(predecessor, successor) != null)
+                        intersections.Add(new IEdge[] { edge, successor });
+                    
+                    // Remove from edges to be tested
+                    edgesUnderTest.Remove(edge);
+                }
             }
 
             return intersections;
@@ -93,7 +106,7 @@ namespace graph
     /// the sweep-line algorithm. Holds a float representing the sweep-line's
     /// y-coordinate and can report its intersection point
     /// </summary>
-    public class SweepLineEdge : IEdge, IComparer<SweepLineEdge>
+    public class SweepLineEdge : IEdge, IComparable<SweepLineEdge>
     {
         public Vector2 startPosition { get; set; }
         public Vector2 endPosition { get; set; }
@@ -144,14 +157,14 @@ namespace graph
         /// <summary>
         /// Compare x-coordinate of intersection point with sweep-line of each edge
         /// </summary>
-        public int Compare(SweepLineEdge x, SweepLineEdge y)
+        public int CompareTo(SweepLineEdge other)
         {
-            var xIntersect = x.SweepLineIntersection();
-            var yIntersect = y.SweepLineIntersection();
+            var xIntersect = this.SweepLineIntersection();
+            var yIntersect = other.SweepLineIntersection();
             if (xIntersect == null || yIntersect == null)
                 throw new ArgumentException("Edge does not intersect sweep-line!");
 
-            return ((float) xIntersect).CompareTo(yIntersect);
+            return ((float)xIntersect).CompareTo(yIntersect);
         }
     }
 

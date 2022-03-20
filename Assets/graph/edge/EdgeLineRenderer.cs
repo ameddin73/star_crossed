@@ -9,6 +9,11 @@ namespace graph.edge
         public Vector2 startPosition { get; set; }
         public Vector2 endPosition { get; set; }
 
+        public Color color
+        {
+            set => SetColor(value);
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -22,6 +27,12 @@ namespace graph.edge
             if (_lineRenderer == null) _lineRenderer = GetComponent<LineRenderer>();
             _lineRenderer.SetPosition(0, startPosition);
             _lineRenderer.SetPosition(1, endPosition);
+        }
+
+        private void SetColor(Color color)
+        {
+            _lineRenderer.startColor = color;
+            _lineRenderer.endColor = color;
         }
 
         public void Destroy()

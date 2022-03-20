@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2294307916931616418}
   - component: {fileID: 6802020199276307516}
-  - component: {fileID: -503233699908553175}
   m_Layer: 0
   m_Name: EdgePrefab
   m_TagString: Untagged
@@ -130,15 +129,3 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 0
---- !u!114 &-503233699908553175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1491201620256550641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c51ab8bb6bd1435198f8555bd470261, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

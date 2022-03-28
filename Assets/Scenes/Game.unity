@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414736, b: 0.121078536, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -341,7 +341,7 @@ GameObject:
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!81 &579784100
 AudioListener:
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 899994977}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de57035e12406eb4bada49db9a2ddd12, type: 3}
+  m_Script: {fileID: 11500000, guid: b1f810bd42fde4150a167c0cd11454ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   edgePrefab: {fileID: 1491201620256550641, guid: 55c575b99f56f4ceca947db681f6f7b7, type: 3}
